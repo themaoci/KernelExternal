@@ -6,11 +6,13 @@
 
 Kernelrequests * pMem;
 int threadDraw = 0;
-
+int readVar1;
+int readVar2;
 void sendrequests() { 
 
-	// pMem->Read<int>(0x123456);
-	// pMem->Write<int>(0x123456,55);
+	readVar1 = pMem->Read<int>(0x4feec8);
+	readVar2 = pMem->Read<int>(0x8a4424);
+	//pMem->Write<int>(0x123456,55);
 
 	pMem->ClearMmunloadedDrivers();
 	pMem->ClearPIDCache();
@@ -40,6 +42,8 @@ void RepainConsole() {
 		pMem->createConsMenu();
 		// gets PID + Base Address of the Target program.
 		pMem->GetPidNBaseAddr();
+		printf("%i", readVar1);
+		printf("%i", readVar2);
 	}
 	threadDraw++;
 }

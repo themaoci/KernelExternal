@@ -18,7 +18,7 @@ HANDLE SharedEvent_dataarv;
 HANDLE SharedEvent_trigger;
 HANDLE SharedEvent_ready2read;
 
-const std::string applicationName = "notepad.exe";
+const std::string applicationName = "DummieTester.exe";
 LPCSTR globDataArrived = "Global\\DataArrived";
 LPCSTR globTrigger = "Global\\trigger";
 LPCSTR globReadyRead = "Global\\ReadyRead";
