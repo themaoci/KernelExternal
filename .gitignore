@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Custom
+KernelModule/x64/
+UserModule/x64/
+kdmapper-1803-2004/.vs/
+kdmapper-1803-2004/x64/
