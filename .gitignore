@@ -27,7 +27,7 @@
 *.lib
 
 # Executables
-*.exe
+# *.exe
 *.out
 *.app
 
@@ -36,3 +36,7 @@ KernelModule/x64/
 UserModule/x64/
 kdmapper-1803-2004/.vs/
 kdmapper-1803-2004/x64/
+DummieTester/bin/Debug/DummieTester.pdb
+DummieTester/bin/Debug/DummieTester.exe.config
+DummieTester/.vs/DummieTester/v16/.suo
+DummieTester/obj/

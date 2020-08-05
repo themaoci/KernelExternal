@@ -1,0 +1,1 @@
+start .\DummieTester\bin\Debug\DummieTester.exe
