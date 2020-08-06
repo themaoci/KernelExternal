@@ -54,8 +54,8 @@ private:
 		pMem->ClearMmunloadedDrivers();
 		pMem->ClearPIDCache();
 
-		readVar1 = pMem->Read<int>(0x4feec8);
-		readVar2 = pMem->Read<int>(0x8a4424);
+		readVar1 = pMem->Read<int>((UINT_PTR)0x4feec8);
+		readVar2 = pMem->Read<int>((UINT_PTR)0x8a4424);
 		//pMem->Write<int>(0x123456,55);
 	}
 

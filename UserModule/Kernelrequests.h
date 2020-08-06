@@ -169,9 +169,11 @@ public:
 		printf("Data Read_struct->Output : %p\n", Read_struct->Output);
 		printf("Data value : %u \n", Read_struct->Output);
 #endif // DBG_PRINT
-
+#pragma warning( push )
+#pragma warning( disable : 4311 )
+#pragma warning( disable : 4302 )
 		type Returnval = ((type)Read_struct->Output);
-
+#pragma warning( pop )
 		UnmapViewOfFile(Read_struct);
 		WaitForSingleObject(SharedEvent_trigger, INFINITE);
 		ResetEvent(SharedEvent_trigger);
@@ -454,7 +456,7 @@ public:
 
 		// Get PID
 		if (!PID) {
-			PID = FindProcessId(applicationName);
+			PID = (ULONG_PTR)FindProcessId(applicationName);
 			std::cout << "PID IS : " << PID << std::endl;
 			// get base address
 		}

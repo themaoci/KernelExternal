@@ -4,7 +4,7 @@
 #include "undocumented_structs.h"
 #include "Structs.h"
 
-
+#pragma region Memory manipulation
 VOID ReadSharedMemory()
 {
 
@@ -200,7 +200,6 @@ NTSTATUS WriteKernelMemory(PEPROCESS ProcessOfTarget,PVOID SourceAddress, PVOID 
 		}
 	}
 	
-
 NTSTATUS ReadKernelMemory(PEPROCESS Process, PVOID SourceAddress, PVOID TargetAddress, SIZE_T Size) {
 
 	PSIZE_T Bytes;
@@ -224,7 +223,6 @@ NTSTATUS ReadKernelMemory(PEPROCESS Process, PVOID SourceAddress, PVOID TargetAd
 		DbgPrintEx(0, 0, "Bytes Read : %u \n", Bytes);
 	}
 }
-
 
 ULONG64 GetModuleBasex64(PEPROCESS proc, UNICODE_STRING module_name) {
 	PPEB pPeb = PsGetProcessPeb(proc);
@@ -266,11 +264,8 @@ ULONG64 GetModuleBasex64(PEPROCESS proc, UNICODE_STRING module_name) {
 	return 0; // failed
 }
 
-
 PVOID g_KernelBase = NULL;
 ULONG g_KernelSize = 0;
-
-
 
 PMM_UNLOADED_DRIVER MmUnloadedDrivers;
 PULONG				MmLastUnloadedDriver;
@@ -577,8 +572,6 @@ NTSTATUS ClearUnloadedDriver(_In_ PUNICODE_STRING	DriverName, _In_ BOOLEAN	 Accq
 
 	return Modified ? STATUS_SUCCESS : STATUS_NOT_FOUND;
 }
-
-
 // clear PID
 
 BOOLEAN LocatePiDDB(PERESOURCE* lock, PRTL_AVL_TABLE* table)
@@ -626,16 +619,13 @@ BOOLEAN LocatePiDDB(PERESOURCE* lock, PRTL_AVL_TABLE* table)
 
 	return TRUE;
 }
-
-
-
-
+#pragma endregion
 
 VOID DriverLoop() {
 
 	while (TRUE)
 	{
-		DbgPrintEx(0, 0, "running waiting for a command to execute.. \n");
+		//DbgPrintEx(0, 0, "running waiting for a command to execute.. \n");
 		ReadSharedMemory();
 		if (strcmp((PCHAR)SharedSection, "Stop") == 0) {
 			DbgPrintEx(0, 0, "breaking out of the loop\n");
@@ -927,10 +917,6 @@ VOID DriverLoop() {
 	}
 }
 
-
-
-
-
 VOID OpenEvents() {
 
 	NTSTATUS status = STATUS_SUCCESS;
@@ -960,25 +946,22 @@ VOID OpenEvents() {
 	}
 }
 
-NTSTATUS DriverEntry(IN PDRIVER_OBJECT pDriverObject, IN PUNICODE_STRING pRegistryPath) {
-	NTSTATUS status = STATUS_SUCCESS;
+NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT pDriverObject, _In_ PUNICODE_STRING pRegistryPath) {
+	//NTSTATUS status = STATUS_SUCCESS;
+	
+	
 	UNREFERENCED_PARAMETER(pRegistryPath);
 
 
 	DbgPrintEx(0, 0, "Driver loaded !!\n");
 
-
 	pDriverObject->DriverUnload = driverUnload;
-
-
 
 	CreateSharedMemory();
 
 	OpenEvents();
 	
-	
-
-	 DriverLoop(); 
+	DriverLoop(); 
 
 	DbgPrintEx(0, 0, "driver entry completed!\n");
 
