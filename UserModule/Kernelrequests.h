@@ -20,9 +20,6 @@ PACL pAcl = NULL;
 PSID pEveryoneSID = NULL;
 EXPLICIT_ACCESS ea[1];
 
-
-
-
 // interface for our driver
 class Kernelrequests
 {
@@ -389,30 +386,6 @@ public:
 		sa.bInheritHandle = FALSE;
 	}
 
-	std::string random_string(int max = 32)
-	{
-		std::string str("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-		std::random_device rd;
-		std::mt19937 generator(rd());
-		std::shuffle(str.begin(), str.end(), generator);
-		return str.substr(0, max);        
-	}
-
-	void createTitle() {
-		SetConsoleTitleA(_strdup(random_string(/*you can specify size here*/).c_str()));
-	}
-	void createConsMenu() {
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xD); // change color to fushia
-		printf(
-		"|=======================================|\n"
-		"|  Sh-mem driver controll               |\n"
-		"| Press F8 to open shared memory.       |\n"
-		"| Press F6 to write Memory!.            |\n"
-		"| Press F9 to Trigger kernel loop!.     |\n"
-		"|=======================================|\n");
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x5); // change color to white
-	}
-
 	void CreateSharedEvents() {
 		SharedEvent_dataarv = CreateEventA(&sa, TRUE, FALSE, globDataArrived);
 		if (!SharedEvent_dataarv)
@@ -480,13 +453,17 @@ public:
 	void GetPidNBaseAddr() {
 
 		// Get PID
+		if (!PID) {
+			PID = FindProcessId(applicationName);
+			std::cout << "PID IS : " << PID << std::endl;
+			// get base address
+		}
+		if (PID && !baseaddr) {
+			baseaddr = GetModuleBase(PID);
+			std::cout << "BASE is : " << std::hex << baseaddr << std::endl;
+		}
 
-		PID = FindProcessId(applicationName);
-		std::cout << "PID IS : " << PID << std::endl;
 
-		// get base address
-		baseaddr = GetModuleBase(PID);
-		std::cout << "base address is : " << std::hex << baseaddr << std::endl;
 	}
 
 };

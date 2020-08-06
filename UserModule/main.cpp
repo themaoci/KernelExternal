@@ -2,88 +2,46 @@
 #include <windows.h>
 #include "Kernelrequests.h"
 #include "KernelHelpers.h"
+#include "main.h"
 #include <tchar.h>
 
-Kernelrequests * pMem;
-int threadDraw = 0;
-int readVar1;
-int readVar2;
-void sendrequests() { 
-
-	readVar1 = pMem->Read<int>(0x4feec8);
-	readVar2 = pMem->Read<int>(0x8a4424);
-	//pMem->Write<int>(0x123456,55);
-
-	pMem->ClearMmunloadedDrivers();
-	pMem->ClearPIDCache();
-
-}
+#include <chrono>
+#include <thread>
 
 
-void stoploop() {
-	auto stopmsg = (char*)MapViewOfFile(hMapFileW, FILE_MAP_WRITE, 0, 0, 4096);
-
-	char stopmms[8];
-	strcpy_s(stopmms, "Stop");
-
-	RtlCopyMemory(stopmsg, stopmms, strlen(stopmms)+1);
-
-	printf("message has been sent to kernel [Stop]! \n");
-
-	FlushViewOfFile(stopmsg, 4096);
-	UnmapViewOfFile(stopmsg);
-}
-
-void RepainConsole() {
-	if (threadDraw == 100) {
-		threadDraw = 0;
-		system("cls");
-		// creates menu text and shit
-		pMem->createConsMenu();
-		// gets PID + Base Address of the Target program.
-		pMem->GetPidNBaseAddr();
-		printf("%i", readVar1);
-		printf("%i", readVar2);
+void ConsoleLoop() {
+	while (true) {
+		MainModule::RepaintConsole();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));// wait 100ms
+		// we are not closing this loop cause its main thread one used in separate thread for performance
 	}
-	threadDraw++;
+}
+void HotkeyLoop() {
+	while (true) {
+		MainModule::HotkeysHandling();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
 }
 
 int main() {
-
-	pMem->createTitle();
+	// WARM UP
+	MainModule::createTitle();
 	// create security descriptor.
 	pMem->createSecuritydesc();
 	// creates events 
 	pMem->CreateSharedEvents();
-
-	
-	// remove this and add a worker thread
-	
+	//Starting threads
+	std::thread thread_01(&ConsoleLoop);
+	std::thread thread_02(&HotkeyLoop);
+	// add threads for esp drawings also for updating variables best will be to use 2/3 separate threads for updating 
+	// but could be very harmfull cause of shared memory 1 pipeline
+	// main application thread should be empty
 	while (true)
 	{
-		RepainConsole();
-		if (GetAsyncKeyState(VK_F8))
-		{
-			// opens sharedmemory. returns true if it successeded!!
-			if (!pMem->OpenSharedMemory()) {
-				printf("OpenSharedMemory returned false.[failed]\n");
-			}
-			Sleep(100);
-		}
-		else if (GetAsyncKeyState(VK_F6)) {
-		    sendrequests();
-			printf("[Completed] sent sendrequests msg to kernel![sendrequests] \n");
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xA);
-			Sleep(100);
-		}
-		else if (GetAsyncKeyState(VK_F5)) {
-			stoploop();
-			Sleep(100);
-		}
-		Sleep(1);
-
+		Sleep(5000);
+		MainModule::createTitle();// poggers remove this later ;)
 	}
-	
+	printf("Closed...");
 	system("pause");
 }
 
