@@ -5,6 +5,7 @@
 #include <tlhelp32.h>
 #include "KernelHelpers.h"
 #include "Structs.h"
+#include "Structs.h"
 #include <stdio.h>
 #include <aclapi.h>
 // nowe ponizej
@@ -23,6 +24,21 @@ EXPLICIT_ACCESS ea[1];
 // interface for our driver
 class Kernelrequests
 {
+private:
+	void print(const char* text, ULONG value, bool isHex = false) {
+		if (isHex) {
+			std::cout << text << std::hex << value << std::endl;
+			return;
+		}
+		std::cout << text << value << std::endl;
+	}
+	void print(const char* text, ULONG64 value, bool isHex = false) {
+		if (isHex) {
+			std::cout << text << std::hex << value << std::endl;
+			return;
+		}
+		std::cout << text << value << std::endl;
+	}
 public:
 	DWORD_PTR FindProcessId(const std::string& processName)
 	{
@@ -457,12 +473,12 @@ public:
 		// Get PID
 		if (!PID) {
 			PID = (ULONG_PTR)FindProcessId(applicationName);
-			std::cout << "PID IS : " << PID << std::endl;
+			print("PID IS : ", PID);
 			// get base address
 		}
 		if (PID && !baseaddr) {
 			baseaddr = GetModuleBase(PID);
-			std::cout << "BASE is : " << std::hex << baseaddr << std::endl;
+			print("BASE IS : ", baseaddr, 1);
 		}
 
 

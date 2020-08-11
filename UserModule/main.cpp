@@ -8,11 +8,10 @@
 #include <chrono>
 #include <thread>
 
-
 void ConsoleLoop() {
 	while (true) {
 		MainModule::RepaintConsole();
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));// wait 100ms
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));// wait 100ms
 		// we are not closing this loop cause its main thread one used in separate thread for performance
 	}
 }
@@ -38,8 +37,9 @@ int main() {
 	// main application thread should be empty
 	while (true)
 	{
-		Sleep(5000);
-		MainModule::createTitle();// poggers remove this later ;)
+		Sleep(2000);
+		MainModule::createTitle();// poggers... remove this later ;)
+		MainModule::ClearErrorLog();
 	}
 	printf("Closed...");
 	system("pause");
