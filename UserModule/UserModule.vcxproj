@@ -103,6 +103,7 @@
     <ClInclude Include="KernelHelpers.h" />
     <ClInclude Include="Kernelrequests.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="MainModule.h" />
     <ClInclude Include="Structs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,6 +3,7 @@
 #include "Kernelrequests.h"
 #include "KernelHelpers.h"
 #include "main.h"
+#include "MainModule.h"
 #include <tchar.h>
 
 #include <chrono>
@@ -10,25 +11,25 @@
 
 void ConsoleLoop() {
 	while (true) {
-		MainModule::RepaintConsole();
+		mModule->RepaintConsole();
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));// wait 100ms
 		// we are not closing this loop cause its main thread one used in separate thread for performance
 	}
 }
 void HotkeyLoop() {
 	while (true) {
-		MainModule::HotkeysHandling();
+		mModule->HotkeysHandling();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }
 
 int main() {
 	// WARM UP
-	MainModule::createTitle();
+	mModule->createTitle();
 	// create security descriptor.
-	pMem->createSecuritydesc();
+	mModule->pMem->createSecuritydesc();
 	// creates events 
-	pMem->CreateSharedEvents();
+	mModule->pMem->CreateSharedEvents();
 	//Starting threads
 	std::thread thread_01(&ConsoleLoop);
 	std::thread thread_02(&HotkeyLoop);
@@ -38,8 +39,8 @@ int main() {
 	while (true)
 	{
 		Sleep(2000);
-		MainModule::createTitle();// poggers... remove this later ;)
-		MainModule::ClearErrorLog();
+		mModule->createTitle();// poggers... remove this later ;)
+		mModule->ClearErrorLog();
 	}
 	printf("Closed...");
 	system("pause");

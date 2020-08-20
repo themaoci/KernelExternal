@@ -111,16 +111,12 @@ NTSTATUS CreateSharedMemory() {
 	RtlInitUnicodeString(&sectionName, SharedSectionName);
 	InitializeObjectAttributes(&objAttr, &sectionName, OBJ_CASE_INSENSITIVE, NULL, &SecDescriptor);
 
-
-
-	
 	if (!NT_SUCCESS(Status)) {
 		DbgPrintEx(0, 0, "last thing  has failed : %p\n", Status);
 	}
 
 	//DbgPrintEx(0, 0, "last thing  was successfully created : %p\n", Status);
 
-	
 	//DbgPrintEx(0, 0, "Finished everything...\n");
 
 	//DbgBreakPoint(); // dbg break point here..
@@ -339,7 +335,7 @@ PVOID GetKernelBase(OUT PULONG pSize)
 		return NULL;
 	}
 
-	pMods = (PRTL_PROCESS_MODULES)ExAllocatePoolWithTag(NonPagedPool, bytes, 0x454E4F45); // 'ENON'
+	pMods = (PRTL_PROCESS_MODULES)ExAllocatePoolWithTag(NonPagedPool, bytes, 0x584D4E49); // 'XMNI' // can be rolled between [41 - 7a]
 	RtlZeroMemory(pMods, bytes);
 
 	status = ZwQuerySystemInformation(SystemModuleInformation, pMods, bytes, &bytes);
@@ -364,7 +360,7 @@ PVOID GetKernelBase(OUT PULONG pSize)
 	}
 
 	if (pMods)
-		ExFreePoolWithTag(pMods, 0x454E4F45); // 'ENON'
+		ExFreePoolWithTag(pMods, 0x584D4E49); // 'XMNI'
 
 	DbgPrintEx(0, 0, "g_KernelBase : %p\n", g_KernelBase);
 	DbgPrintEx(0, 0, "g_KernelSize : %p\n", g_KernelSize);
@@ -484,7 +480,6 @@ BOOLEAN IsMmUnloadedDriversFilled(VOID)
 
 	return TRUE;
 }
-
 
 NTSTATUS ClearUnloadedDriver(_In_ PUNICODE_STRING	DriverName, _In_ BOOLEAN	 AccquireResource)
 {
@@ -637,21 +632,16 @@ VOID DriverLoop() {
 
 			KeSetEvent(SharedEvent_dt, 0, FALSE);
 
-			
-			
 			LARGE_INTEGER Timeout;
 			Timeout.QuadPart = RELATIVE(SECONDS(1));
 			KeDelayExecutionThread(KernelMode, FALSE, &Timeout);
 			ReadSharedMemory();
 
-
 			KM_WRITE_REQUEST* WriteInput = (KM_WRITE_REQUEST*)SharedSection;
 			PEPROCESS Process;
 			NTSTATUS Status = STATUS_SUCCESS;
 
-		
 			// DbgPrintEx(0, 0, "%p Pid %u SourcesAddress %p TargetAddress %p Size %x\n", WriteInput, WriteInput->ProcessId, WriteInput->SourceAddress, WriteInput->TargetAddress, WriteInput->Size);
-
 
 			Status = PsLookupProcessByProcessId(WriteInput->ProcessId, &Process);
 			if (NT_SUCCESS(Status)) {
@@ -671,18 +661,15 @@ VOID DriverLoop() {
 		    break;
 		}
 		
-
 		while (!(PCHAR)SharedSection == NULL && strcmp((PCHAR)SharedSection, "Read") == 0) {
 			DbgPrintEx(0, 0, "Read memory loop is running\n");
 
 			KeSetEvent(SharedEvent_dt, 0, FALSE);
 
-
 			LARGE_INTEGER Timeout;
 			Timeout.QuadPart = RELATIVE(SECONDS(1));
 			KeDelayExecutionThread(KernelMode, FALSE, &Timeout);
 			ReadSharedMemory();
-
 
 			KM_READ_REQUEST* ReadInput = (KM_READ_REQUEST*)SharedSection;
 			void* ReadOutput = NULL;
@@ -721,7 +708,7 @@ VOID DriverLoop() {
 			break;
 		}
 
-
+		/* this was broken ?? cause there is second one below which has mof indeepth things ...
 		while (!(PCHAR)SharedSection == NULL && strcmp((PCHAR)SharedSection, "Clearmm") == 0) {
 			DbgPrintEx(0, 0, "Clear Mmunloaded Drivers memory loop is running\n");
 
@@ -737,7 +724,7 @@ VOID DriverLoop() {
 		//	ClearUnloadedDriver(&DriverName, TRUE);
 
 			DbgPrintEx(0, 0, "MMunload cleared check with lm command\n");
-		}
+		}*/
 
 		while (!(PCHAR)SharedSection == NULL && strcmp((PCHAR)SharedSection, "getBase") == 0) {
 			DbgPrintEx(0, 0, "getBase loop is running\n");
@@ -780,7 +767,6 @@ VOID DriverLoop() {
 			KeResetEvent(SharedEvent_dt);
 			KeResetEvent(SharedEvent_ReadyRead);
 		}
-
 
 		while (!(PCHAR)SharedSection == NULL && strcmp((PCHAR)SharedSection, "Clearpid") == 0) {
 			DbgPrintEx(0, 0, "Clearpid loop is running\n");
@@ -870,8 +856,6 @@ VOID DriverLoop() {
 			KeResetEvent(SharedEvent_ReadyRead);
 
 		}
-
-
 
 		while (!(PCHAR)SharedSection == NULL && strcmp((PCHAR)SharedSection, "Clearmm") == 0) {
 
