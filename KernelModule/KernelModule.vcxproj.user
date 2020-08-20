@@ -6,5 +6,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TestCertificate>CN="WDKTestCert X,132416188484873105" | C5C7D5228FACC03B1008683D6E95F5237AF8460F</TestCertificate>
+    <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

@@ -1,67 +1,23 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <windows.h>
-#include "Kernelrequests.h"
-#include "KernelHelpers.h"
 #include <tchar.h>
-
 #include <chrono>
 #include <thread>
+
+#include "xor_str.h"
+#include "Kernelrequests.h"
+#include "KernelHelpers.h"
+
+std::string errorList;
+int readVar1 = 0;
+int readVar2 = 0;
+bool memonyOpen = false;
 
 class MainModule {
 	/*
 		Only things happend in Main program such as console drawing or hotkeys
 	*/
-public:
-	Kernelrequests* pMem;
-	std::string errorList;
-	int threadDraw = 0;
-	int readVar1;
-	int readVar2;
-	bool memonyOpen = false;
-
-	void drawErrorText() {
-
-	}
-	void ClearErrorLog() {
-		std::size_t found = errorList.find("\n");
-		if (found != std::string::npos)
-			errorList.erase(0, found + 1);
-	}
-	void createTitle() {
-		SetConsoleTitleA(_strdup(random_string(/*you can specify size here*/).c_str()));
-	}
-
-	void RepaintConsole() {
-		cls();
-		createConsMenu();
-		pMem->GetPidNBaseAddr();
-		printf("readVar1: %d\n", readVar1);
-		printf("readVar2: %d\n", readVar2);
-		printf(errorList.c_str());
-		//MainModule::drawErrorText();
-	}
-	void HotkeysHandling() {
-		if (GetAsyncKeyState(VK_F8)) {
-			// opens sharedmemory. returns true if it successeded!!
-			if (!pMem->OpenSharedMemory()) {
-				errorList.append("OpenSharedMemory returned false.[failed]\n");
-			}
-			else memonyOpen = true;
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-		else if (GetAsyncKeyState(VK_F6) && memonyOpen) {
-			sendrequests();
-			errorList.append("[Completed] sent sendrequests msg to kernel![sendrequests]\n");
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xA);
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-		else if (GetAsyncKeyState(VK_F5)) {
-			stoploop();
-			errorList.append("Stopping Loop\n");
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
-	}
 
 private:
 	void cls()
@@ -133,14 +89,61 @@ private:
 		return str.substr(0, max);
 	}
 	void createConsMenu() {
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xD); // change color to fushia
-		printf("|===================================|\n");
-		printf("| - Driver controll -               |\n");
-		printf("| Press F8 to open shared memory.   |\n");
-		printf("| Press F6 to write Memory!.        |\n");
-		printf("| Press F9 to Trigger kernel loop!. |\n");
-		printf("|===================================|\n");
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x5); // change color to white
+		//SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xD); // change color to fushia
+		//std::wcout << L"╔═══════════════════════════════════╗\n" << L"║ Press F8 to open shared memory.   ║\n" << L"║ Press F6 to write Memory!.        ║\n" << L"║ Press F9 to Trigger kernel loop!. ║\n" << L"╚═══════════════════════════════════╝\n";
+		printf("%ls",L"╔═══════════════════════════════════╗\n"
+			L"║ Press F8 to open shared memory.   ║\n"
+			L"║ Press F6 to write Memory!.        ║\n"
+			L"║ Press F9 to Trigger kernel loop!. ║\n"
+			L"╚═══════════════════════════════════╝\n");
+		//SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x5); // change color to white
+	}
+public:
+	Kernelrequests* pMem;
+
+	void drawErrorText() {
+
+	}
+	void ClearErrorLog() {
+		std::size_t found = errorList.find("\n");
+		if (found != std::string::npos)
+			errorList.erase(0, found + 1);
+	}
+	void createTitle() {
+		SetConsoleTitleA(_strdup(random_string(/*you can specify size here*/).c_str()));
+	}
+
+	void RepaintConsole() {
+		cls();
+		std::wcout << L"...";
+
+		createConsMenu();
+		pMem->GetPidNBaseAddr();
+		//printf("readVar1: %d\n", readVar1);
+		//printf("readVar2: %d\n", readVar2);
+		printf(errorList.c_str());
+		//MainModule::drawErrorText();
+	}
+	void HotkeysHandling() {
+		if (GetAsyncKeyState(VK_F8)) {
+			// opens sharedmemory. returns true if it successeded!!
+			if (!pMem->OpenSharedMemory()) {
+				errorList.append("OpenSharedMemory returned false.[failed]\n");
+			}
+			else memonyOpen = true;
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		else if (GetAsyncKeyState(VK_F6) && memonyOpen) {
+			sendrequests();
+			errorList.append("[Completed] sent sendrequests msg to kernel![sendrequests]\n");
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0xA);
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+		else if (GetAsyncKeyState(VK_F5)) {
+			stoploop();
+			errorList.append("Stopping Loop\n");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
 	}
 
 };

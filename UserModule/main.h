@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Kernelrequests.h"
 #include "KernelHelpers.h"
 #include "MainModule.h"
@@ -10,3 +10,11 @@
 #include <thread>
 
 MainModule* mModule;
+
+
+class cLogic {
+public:
+	void Loop() {}
+private:
+
+};

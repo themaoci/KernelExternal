@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <vector>
 #include <windows.h>
@@ -50,26 +50,21 @@ public:
 			return 0;
 
 		Process32First(processesSnapshot, &processInfo);
-		if (!processName.compare(processInfo.szExeFile))
+		//changed not sure if strcmp is workign as intended xD
+		do
 		{
-			CloseHandle(processesSnapshot);
-			return processInfo.th32ProcessID;
-		}
-
-		while (Process32Next(processesSnapshot, &processInfo))
-		{
-			if (!processName.compare(processInfo.szExeFile))
+			if (!strcmp((char*)processInfo.szExeFile, processName.c_str()))
 			{
 				CloseHandle(processesSnapshot);
 				return processInfo.th32ProcessID;
 			}
-		}
+		} while (Process32Next(processesSnapshot, &processInfo));
 
 		CloseHandle(processesSnapshot);
 		return 0;
 	}
 	// add functions here kernel functions
-	template<typename T>
+	template <typename T>
 	bool Write(UINT_PTR WriteAddress, const T& value)
 	{
 		return WriteVirtualMemoryRaw(WriteAddress, (UINT_PTR)&value, sizeof(T));

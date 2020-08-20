@@ -1,14 +1,18 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include "Kernelrequests.h"
 #include "KernelHelpers.h"
 #include "main.h"
 #include "MainModule.h"
 #include <tchar.h>
-
+//#include <stdio.h>
+#include <fcntl.h>	// console display extended ascii
+#include <io.h>		// console display extended ascii
 #include <chrono>
 #include <thread>
-
+/*
+usage of _xor(L"string to encrypt but still be visible in application");
+*/
 void ConsoleLoop() {
 	while (true) {
 		mModule->RepaintConsole();
@@ -25,6 +29,7 @@ void HotkeyLoop() {
 
 int main() {
 	// WARM UP
+	//_setmode(_fileno(stdout), _O_U8TEXT);
 	mModule->createTitle();
 	// create security descriptor.
 	mModule->pMem->createSecuritydesc();

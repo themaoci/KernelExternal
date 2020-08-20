@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="KernelHelpers.h" />
+    <ClInclude Include="Kernelrequests.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="MainModule.h" />
+    <ClInclude Include="Enums.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Offsets.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="xor_str.h">
+      <Filter>Addons</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Game">
+      <UniqueIdentifier>{bbe493e2-71f8-4834-9e91-aaf672dc68f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{1604082c-751d-4f08-94ca-81020a829b18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Addons">
+      <UniqueIdentifier>{c9e7c079-57a3-48c2-a89f-905ed9c92bd9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
